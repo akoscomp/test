@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "wheezy"
+  config.vm.box = "ubuntu/trusty64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -71,16 +71,17 @@ Vagrant.configure(2) do |config|
   
   config.vm.provider "virtualbox" do |v|
     v.customize [ "createhd", "--filename", "diskbash.vdi", "--size", 200000 ]
-    v.customize [ 'storageattach', :id, '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "diskbash.vdi"]
+    v.customize [ 'storageattach', :id, '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "diskbash.vdi"]
   end
 
-  config.vm.provision "shell", inline: "printf 'o\nn\np\n1\n\n\nw' | fdisk /dev/sdb"
-  config.vm.provision "shell", inline: "mkfs.ext4 -q /dev/sdb1"
-  config.vm.provision "shell", inline: "mkdir /var/www"
-  config.vm.provision "shell", inline: "mount /dev/sdb1 /var/www"
+  config.vm.provision "shell", inline: "printf 'o\nn\np\n1\n\n\nw' | sudo fdisk /dev/sdb"
+  config.vm.provision "shell", inline: "sudo mkfs.ext4 -q /dev/sdb1"
+  config.vm.provision "shell", inline: "sudo mkdir /var/www"
+  config.vm.provision "shell", inline: "sudo mount /dev/sdb1 /var/www"
   
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "provisioning/playbook.yml"
+    ansible.sudo = true
   end
   
 end

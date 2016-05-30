@@ -1,0 +1,7 @@
+test:
+  image: nimmis/apache-php5
+  volumes:
+   - ./html:/var/www/html
+  ports:
+   - "80:80"
+
